@@ -46,8 +46,14 @@ server = app.server
 
 # Define the layout of the dashboard
 app.layout = html.Div(
+    style={
+        'fontFamily': 'Google Sans, sans-serif',
+        'marginLeft': '3rem',
+        'marginRight': '3rem',
+    },
     children=[
-        html.H1('CO544-2023 Lab 3: Wine Quality Prediction'),
+        html.H1('CO544-2023 Lab 3: Wine Quality Prediction',
+                style={'textAlign': 'center'}),
         # Layout for exploratory data analysis: correlation between two selected features
         html.Div([
             html.H3('Exploratory Data Analysis'),
@@ -57,7 +63,7 @@ app.layout = html.Div(
                 options=[{'label': col, 'value': col} for col in data.columns],
                 value=data.columns[0]
             )
-        ], style={'width': '30%', 'display': 'inline-block'}),
+        ], style={'width': '30%', 'display': 'inline-block', 'marginRight': '2rem'}),
 
         html.Div([
             html.Label('Feature 2 (Y-axis)'),
@@ -66,43 +72,67 @@ app.layout = html.Div(
                 options=[{'label': col, 'value': col} for col in data.columns],
                 value=data.columns[1]
             )
-        ], style={'width': '30%', 'display': 'inline-block'}),
+        ], style={'width': '30%', 'display': 'inline-block', 'marginRight': '2rem'}),
 
-        dcc.Graph(id='correlation_plot'),
+        dcc.Graph(id='correlation_plot', style={
+                  'marginTop': '3rem', 'marginBottom': '2rem'}),
 
         # Layout for wine quality prediction based on input feature values
         html.H3("Wine Quality Prediction"),
-        html.Div([
-            html.Label("Fixed Acidity"),
-            dcc.Input(id='fixed_acidity', type='number', required=True),
-            html.Label("Volatile Acidity"),
-            dcc.Input(id='volatile_acidity', type='number', required=True),
-            html.Label("Citric Acid"),
-            dcc.Input(id='citric_acid', type='number', required=True),
-            html.Br(),
 
-            html.Label("Residual Sugar"),
-            dcc.Input(id='residual_sugar', type='number', required=True),
-            html.Label("Chlorides"),
-            dcc.Input(id='chlorides', type='number', required=True),
-            html.Label("Free Sulfur Dioxide"),
-            dcc.Input(id='free_sulfur_dioxide', type='number', required=True),
-            html.Br(),
-
-            html.Label("Total Sulfur Dioxide"),
-            dcc.Input(id='total_sulfur_dioxide', type='number', required=True),
-            html.Label("Density"),
-            dcc.Input(id='density', type='number', required=True),
-            html.Label("pH"),
-            dcc.Input(id='ph', type='number', required=True),
-            html.Br(),
-
-            html.Label("Sulphates"),
-            dcc.Input(id='sulphates', type='number', required=True),
-            html.Label("Alcohol"),
-            dcc.Input(id='alcohol', type='number', required=True),
-            html.Br(),
-        ]),
+        # table with 2 columns, no border
+        html.Table([
+            html.Tr([
+                html.Td(html.Label("Fixed Acidity")),
+                html.Td(dcc.Input(id='fixed_acidity',
+                        type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Volatile Acidity")),
+                html.Td(dcc.Input(id='volatile_acidity',
+                        type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Citric Acid")),
+                html.Td(dcc.Input(id='citric_acid',
+                        type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Residual Sugar")),
+                html.Td(dcc.Input(id='residual_sugar',
+                        type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Chlorides")),
+                html.Td(dcc.Input(id='chlorides', type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Free Sulfur Dioxide")),
+                html.Td(dcc.Input(id='free_sulfur_dioxide',
+                        type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Total Sulfur Dioxide")),
+                html.Td(dcc.Input(id='total_sulfur_dioxide',
+                        type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Density")),
+                html.Td(dcc.Input(id='density', type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("pH")),
+                html.Td(dcc.Input(id='ph', type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Sulphates")),
+                html.Td(dcc.Input(id='sulphates', type='number', required=True)),
+            ]),
+            html.Tr([
+                html.Td(html.Label("Alcohol")),
+                html.Td(dcc.Input(id='alcohol', type='number', required=True)),
+            ]),
+        ], style={'marginBottom': '1rem'}),
 
         html.Div([
             html.Button('Predict', id='predict-button', n_clicks=0),
@@ -117,20 +147,21 @@ app.layout = html.Div(
 # Define the callback to update the correlation plot
 
 
-@app.callback(
+@ app.callback(
     dash.dependencies.Output('correlation_plot', 'figure'),
     [dash.dependencies.Input('x_feature', 'value'),
      dash.dependencies.Input('y_feature', 'value')]
 )
 def update_correlation_plot(x_feature, y_feature):
     fig = px.scatter(data, x=x_feature, y=y_feature, color='quality')
-    fig.update_layout(title=f"Correlation between {x_feature} and {y_feature}")
+    fig.update_layout(
+        title=f"Correlation between {x_feature} and {y_feature}")
     return fig
 
 # Define the callback function to predict wine quality
 
 
-@app.callback(
+@ app.callback(
     Output(component_id='prediction-output', component_property='children'),
     [Input('predict-button', 'n_clicks')],
     [State('fixed_acidity', 'value'),
