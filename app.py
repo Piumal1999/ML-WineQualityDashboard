@@ -42,7 +42,7 @@ logreg_model.fit(X_train, y_train)
 
 # Create the Dash app
 app = dash.Dash(__name__)
-# server = app.server
+server = app.server
 
 # Define the layout of the dashboard
 app.layout = html.Div(
