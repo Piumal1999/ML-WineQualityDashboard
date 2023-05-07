@@ -135,6 +135,8 @@ app.layout = html.Div(
         ], style={'marginBottom': '1rem'}),
 
         html.Div([
+            html.Button('AutoFill', id='autofill-button', n_clicks=0, style={
+                        'marginRight': '1rem'}),
             html.Button('Predict', id='predict-button', n_clicks=0),
         ]),
 
@@ -193,6 +195,31 @@ def predict_quality(n_clicks, fixed_acidity, volatile_acidity, citric_acid,
     else:
         return 'This wine is predicted to be bad quality.'
 
+# Define the callback function to autofill the input fields, it will fill the input fields with random values
 
+
+@ app.callback(
+    Output(component_id='fixed_acidity', component_property='value'),
+    Output(component_id='volatile_acidity', component_property='value'),
+    Output(component_id='citric_acid', component_property='value'),
+    Output(component_id='residual_sugar', component_property='value'),
+    Output(component_id='chlorides', component_property='value'),
+    Output(component_id='free_sulfur_dioxide', component_property='value'),
+    Output(component_id='total_sulfur_dioxide', component_property='value'),
+    Output(component_id='density', component_property='value'),
+    Output(component_id='ph', component_property='value'),
+    Output(component_id='sulphates', component_property='value'),
+    Output(component_id='alcohol', component_property='value'),
+    Input('autofill-button', 'n_clicks')
+)
+def autofill(n_clicks):
+    # get set of values from a row in the dataset
+    input_features = data.sample(n=1).values
+
+    # return the values
+    return input_features[0][0], input_features[0][1], input_features[0][2], input_features[0][3], input_features[0][4], input_features[0][5], input_features[0][6], input_features[0][7], input_features[0][8], input_features[0][9], input_features[0][10]
+
+
+# Run the app
 if __name__ == '__main__':
     app.run_server(debug=False)
