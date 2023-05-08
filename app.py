@@ -306,7 +306,7 @@ def update_correlation_plot(x_feature, y_feature):
 
 
 @app.callback(
-    Output("prediction-output", "children"),
+    Output("prediction-output", "children", allow_duplicate=True),
     [Input("predict-button", "n_clicks")],
     [
         State("fixed_acidity", "value"),
@@ -321,6 +321,7 @@ def update_correlation_plot(x_feature, y_feature):
         State("sulphates", "value"),
         State("alcohol", "value"),
     ],
+    prevent_initial_call=True
 )
 def predict_quality(
     n_clicks,
@@ -377,7 +378,9 @@ def predict_quality(
     Output("ph", "value"),
     Output("sulphates", "value"),
     Output("alcohol", "value"),
+    Output("prediction-output", "children"),
     [Input("clear-button", "n_clicks"), Input("autofill-button", "n_clicks")],
+    prevent_initial_call=True
 )
 def autofill(clear_click, autofill_click):
     # get the id of the button that triggered the callback
@@ -385,7 +388,7 @@ def autofill(clear_click, autofill_click):
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
     if button_id == "clear-button":
-        return None, None, None, None, None, None, None, None, None, None, None
+        return None, None, None, None, None, None, None, None, None, None, None, None
     else:
         # get set of values from a row in the dataset
         input_features = data.sample(n=1).values
@@ -403,9 +406,10 @@ def autofill(clear_click, autofill_click):
             input_features[0][8],
             input_features[0][9],
             input_features[0][10],
+            None,
         )
 
 
 # Run the app
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
